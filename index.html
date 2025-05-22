@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Redox Quest: Si Penyelamat Elektron</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #c2e9fb, #a1c4fd);
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 { color: #2b2b2b; }
+    .question { font-size: 1.2rem; margin: 20px 0; }
+    button {
+      background: #4b7bec;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover { background: #3867d6; }
+    .info { margin-top: 10px; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Redox Quest 🔥</h1>
+    <div id="gameArea">
+      <div id="question" class="question">Klik mulai untuk memulai game!</div>
+      <div id="choices"></div>
+      <div class="info">
+        <p>⏱️ Timer: <span id="timer">60</span> detik</p>
+        <p>⭐ Skor: <span id="score">0</span></p>
+        <p>❤️ Nyawa: <span id="lives">3</span></p>
+        <p>📘 Sesi ke-<span id="round">0</span> dari 10</p>
+      </div>
+      <button onclick="startGame()">Mulai Game</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Dalam reaksi: Zn → Zn²⁺ + 2e⁻, proses apa yang terjadi pada Zn?",
+        options: ["Oksidasi", "Reduksi"],
+        answer: "Oksidasi"
+      },
+      {
+        q: "Bilangan oksidasi O dalam H₂O₂ adalah?",
+        options: ["-1", "-2", "0", "+1"],
+        answer: "-1"
+      },
+      {
+        q: "Dalam reaksi redoks, zat yang mengalami penurunan bilangan oksidasi disebut?",
+        options: ["Agen Reduksi", "Agen Oksidasi"],
+        answer: "Agen Oksidasi"
+      },
+      {
+        q: "Fe³⁺ → Fe²⁺ adalah proses?",
+        options: ["Oksidasi", "Reduksi"],
+        answer: "Reduksi"
+      },
+      {
+        q: "Bilangan oksidasi Mn dalam KMnO₄ adalah?",
+        options: ["+7", "+2", "+4", "0"],
+        answer: "+7"
+      },
+      {
+        q: "Unsur berikut mengalami oksidasi jika biloksnya...",
+        options: ["Naik", "Turun"],
+        answer: "Naik"
+      },
+      {
+        q: "Apa hasil reduksi dari Cl₂?",
+        options: ["Cl⁻", "Cl⁺"],
+        answer: "Cl⁻"
+      },
+      {
+        q: "Reaksi redoks melibatkan transfer...",
+        options: ["Elektron", "Proton"],
+        answer: "Elektron"
+      },
+      {
+        q: "Jika suatu zat bertindak sebagai agen reduksi, maka dia mengalami...",
+        options: ["Oksidasi", "Reduksi"],
+        answer: "Oksidasi"
+      },
+      {
+        q: "Apa fungsi dari bilangan oksidasi?",
+        options: ["Menentukan perubahan elektron", "Menentukan massa atom"],
+        answer: "Menentukan perubahan elektron"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let lives = 3;
+    let timer;
+    let timeLeft = 60;
+
+    function startGame() {
+      current = 0;
+      score = 0;
+      lives = 3;
+      timeLeft = 60;
+      document.getElementById("score").textContent = score;
+      document.getElementById("lives").textContent = lives;
+      document.getElementById("round").textContent = current + 1;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (current >= questions.length || lives === 0) {
+        document.getElementById("question").textContent =
+          lives === 0 ? "Game Over!" : "Game Selesai! Skor akhir: " + score;
+        document.getElementById("choices").innerHTML = "";
+        return;
+      }
+
+      let q = questions[current];
+      document.getElementById("question").textContent = q.q;
+      document.getElementById("choices").innerHTML = "";
+
+      q.options.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt);
+        document.getElementById("choices").appendChild(btn);
+      });
+
+      timeLeft = 60;
+      document.getElementById("timer").textContent = timeLeft;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").textContent = timeLeft;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          lives--;
+          document.getElementById("lives").textContent = lives;
+          current++;
+          document.getElementById("round").textContent = current + 1;
+          showQuestion();
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(selected) {
+      clearInterval(timer);
+      if (selected === questions[current].answer) {
+        score += 10;
+        alert("Benar!");
+      } else {
+        score -= 5;
+        lives--;
+        alert("Salah!");
+      }
+      document.getElementById("score").textContent = score;
+      document.getElementById("lives").textContent = lives;
+      current++;
+      document.getElementById("round").textContent = current + 1;
+      showQuestion();
+    }
+  </script>
+</body>
+</html>
